@@ -15,7 +15,9 @@ final class NetworkManager {
     private init() { }
     
     func fetchDailyBoxOffice(at date: String, completion: @escaping ([DailyBoxOfficeList]?, Error?) -> Void) {
-        guard let url = URL(string: "http://kobis.or.kr/kobisopenapi/webservice/rest/boxoffice/searchDailyBoxOfficeList.json?key=\(key)&targetDt=\(date)") else {
+        let api = "http://kobis.or.kr/kobisopenapi/webservice/rest/boxoffice/searchDailyBoxOfficeList.json?key=\(key)&targetDt=\(date)"
+        
+        guard let url = URL(string: api) else {
             completion(nil, FetchError.invalidURL)
             return
         }
@@ -44,7 +46,9 @@ final class NetworkManager {
     }
     
     func fetchMovieDetail(code: String, completion: @escaping (MovieInfo?, Error?) -> Void) {
-        guard let url = URL(string: "http://www.kobis.or.kr/kobisopenapi/webservice/rest/movie/searchMovieInfo.json?key=\(key)&movieCd=\(code)") else {
+        let api = "http://www.kobis.or.kr/kobisopenapi/webservice/rest/movie/searchMovieInfo.json?key=\(key)&movieCd=\(code)"
+        
+        guard let url = URL(string: api) else {
             completion(nil, FetchError.invalidURL)
             return
         }
