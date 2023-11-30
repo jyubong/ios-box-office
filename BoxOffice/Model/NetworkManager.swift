@@ -9,8 +9,8 @@ import Foundation
 
 final class NetworkManager {
     static let shared = NetworkManager()
-    
     private let key = "3d65ed918572e0c8dc412bb3bf722f49"
+    var urlSession = URLSession.shared
     
     private init() { }
     
@@ -22,7 +22,7 @@ final class NetworkManager {
             return
         }
         
-        URLSession.shared.dataTask(with: url) { data, response, error in
+        urlSession.dataTask(with: url) { data, response, error in
             if let error = error {
                 completion(nil, error)
                 return
@@ -53,7 +53,7 @@ final class NetworkManager {
             return
         }
         
-        URLSession.shared.dataTask(with: url) { data, response, error in
+        urlSession.dataTask(with: url) { data, response, error in
             if let error = error {
                 completion(nil, error)
                 return
