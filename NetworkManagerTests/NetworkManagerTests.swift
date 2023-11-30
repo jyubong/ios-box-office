@@ -6,30 +6,30 @@
 //
 
 import XCTest
+@testable import BoxOffice
 
 final class NetworkManagerTests: XCTestCase {
+    var sut: NetworkManager!
 
-    override func setUpWithError() throws {
-        // Put setup code here. This method is called before the invocation of each test method in the class.
-    }
-
-    override func tearDownWithError() throws {
-        // Put teardown code here. This method is called after the invocation of each test method in the class.
-    }
-
-    func testExample() throws {
-        // This is an example of a functional test case.
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
-        // Any test you write for XCTest can be annotated as throws and async.
-        // Mark your test throws to produce an unexpected failure when your test encounters an uncaught error.
-        // Mark your test async to allow awaiting for asynchronous code to complete. Check the results with assertions afterwards.
-    }
-
-    func testPerformanceExample() throws {
-        // This is an example of a performance test case.
-        measure {
-            // Put the code you want to measure the time of here.
+    func test_fetchDailyBoxOffice() {
+        let url = URL(string: "https://kobis.or.kr/kobisopenapi/webservice/rest/boxoffice/searchDailyBoxOfficeList.json?key=f5eef3421c602c6cb7ea224104795888&targetDt=20220105")!
+        let data = TestMovieJsonData.json.data(using: .utf8)!
+        let response = HTTPURLResponse(url: url, statusCode: 200, httpVersion: nil, headerFields: nil)
+        let dummy = DummyData(data: data, response: response, error: nil)
+        let stubURLSession = StubURLSession(dummy: dummy)
+        
+        sut = .init(urlSession: stubURLSession)
+        
+        var result: [DailyBoxOfficeList]?
+        
+        sut.fetchDailyBoxOffice(at: "20220105") { dailyBoxOfficeList, error  in
+            result = dailyBoxOfficeList
         }
+        
+        let expectation: [DailyBoxOfficeList]? = try? JSONDecoder().decode(Movie.self, from: data).boxOfficeResult.dailyBoxOfficeList
+        
+        XCTAssertEqual(result, expectation)
+        XCTAssertNotNil(result)
+        XCTAssertNotNil(expectation)
     }
-
 }

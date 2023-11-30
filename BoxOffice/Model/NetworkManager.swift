@@ -8,11 +8,12 @@
 import Foundation
 
 final class NetworkManager {
-    static let shared = NetworkManager()
+    private let urlSession: URLSessionProtocol
     private let key = "3d65ed918572e0c8dc412bb3bf722f49"
-    var urlSession = URLSession.shared
     
-    private init() { }
+    init(urlSession: URLSessionProtocol = URLSession.shared) {
+        self.urlSession = urlSession
+    }
     
     func fetchDailyBoxOffice(at date: String, completion: @escaping ([DailyBoxOfficeList]?, Error?) -> Void) {
         let api = "http://kobis.or.kr/kobisopenapi/webservice/rest/boxoffice/searchDailyBoxOfficeList.json?key=\(key)&targetDt=\(date)"
