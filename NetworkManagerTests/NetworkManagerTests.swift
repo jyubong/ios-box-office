@@ -6,30 +6,92 @@
 //
 
 import XCTest
+@testable import BoxOffice
 
 final class NetworkManagerTests: XCTestCase {
+    var sut: NetworkManager!
+    private let api = "https://kobis.or.kr/kobisopenapi/webservice/rest/boxoffice/searchDailyBoxOfficeList.json?key=f5eef3421c602c6cb7ea224104795888&targetDt=20220105"
 
-    override func setUpWithError() throws {
-        // Put setup code here. This method is called before the invocation of each test method in the class.
-    }
-
-    override func tearDownWithError() throws {
-        // Put teardown code here. This method is called after the invocation of each test method in the class.
-    }
-
-    func testExample() throws {
-        // This is an example of a functional test case.
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
-        // Any test you write for XCTest can be annotated as throws and async.
-        // Mark your test throws to produce an unexpected failure when your test encounters an uncaught error.
-        // Mark your test async to allow awaiting for asynchronous code to complete. Check the results with assertions afterwards.
-    }
-
-    func testPerformanceExample() throws {
-        // This is an example of a performance test case.
-        measure {
-            // Put the code you want to measure the time of here.
+    func test_fetchDailyBoxOffice_success() {
+        // given
+        let promise = expectation(description: "")
+        
+        guard let url = URL(string: api) else {
+            XCTFail()
+            return
         }
+        
+        guard let data = TestMovieJsonData.json.data(using: .utf8) else {
+            XCTFail()
+            return
+        }
+        
+        TestURLProtocol.loadingHandler = { request in
+            let response = HTTPURLResponse(url: url, statusCode:200, httpVersion: nil, headerFields: nil)
+            return (data, response, nil)
+        }
+        
+        let configuration = URLSessionConfiguration.ephemeral
+        configuration.protocolClasses = [TestURLProtocol.self]
+        
+        sut = .init(urlSession: URLSession(configuration: configuration))
+        
+        let expectation: Movie? = try? JSONDecoder().decode(Movie.self, from: data)
+        var result: Movie?
+        
+        // when
+        sut.fetchData<Movie>(url: api) { movie, error  in
+            result = movie
+            //then
+            XCTAssertEqual(result, expectation)
+            
+            promise.fulfill()
+        }
+        
+        wait(for: [promise], timeout: 10)
     }
-
+    
+    func test_fetchDailyBoxOffice_resoponse_Failure() {
+        // given
+        let promise = expectation(description: "")
+        
+        guard let url = URL(string: api) else {
+            XCTFail()
+            return
+        }
+        
+        guard let data = TestMovieJsonData.json.data(using: .utf8) else {
+            XCTFail()
+            return
+        }
+        
+        TestURLProtocol.loadingHandler = { request in
+            let response = HTTPURLResponse(url: url, statusCode:404, httpVersion: nil, headerFields: nil)
+            return (data, response, nil)
+        }
+        
+        let configuration = URLSessionConfiguration.ephemeral
+        configuration.protocolClasses = [TestURLProtocol.self]
+        
+        sut = .init(urlSession: URLSession(configuration: configuration))
+        
+        let expectation = FetchError.invalidResponse
+        var movieResult: Movie?
+        
+        // when
+        sut.fetchData<Movie>(url: api) { movie, error in
+            movieResult = movie
+            guard let errorResult = error as? FetchError else {
+                XCTFail()
+                return
+            }
+            
+            //then
+            XCTAssertNil(movieResult)
+            XCTAssertEqual(errorResult, expectation)
+            promise.fulfill()
+        }
+        
+        wait(for: [promise], timeout: 10)
+    }
 }
