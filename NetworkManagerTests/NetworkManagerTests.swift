@@ -40,7 +40,7 @@ final class NetworkManagerTests: XCTestCase {
         var result: Movie?
         
         // when
-        sut.fetchData<Movie>(url: api) { movie, error  in
+        sut.fetchData(url: api, dataType: Movie.self) { movie, error  in
             result = movie
             //then
             XCTAssertEqual(result, expectation)
@@ -76,19 +76,17 @@ final class NetworkManagerTests: XCTestCase {
         sut = .init(urlSession: URLSession(configuration: configuration))
         
         let expectation = FetchError.invalidResponse
-        var movieResult: Movie?
         
         // when
-        sut.fetchData<Movie>(url: api) { movie, error in
-            movieResult = movie
-            guard let errorResult = error as? FetchError else {
+        sut.fetchData(url: api, dataType: Movie.self) { movie, error in
+            guard let result = error as? FetchError else {
                 XCTFail()
                 return
             }
             
             //then
-            XCTAssertNil(movieResult)
-            XCTAssertEqual(errorResult, expectation)
+            XCTAssertNil(movie)
+            XCTAssertEqual(result, expectation)
             promise.fulfill()
         }
         
