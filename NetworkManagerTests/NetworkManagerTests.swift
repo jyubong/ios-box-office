@@ -29,6 +29,23 @@ final class NetworkManagerTests: XCTestCase {
         XCTAssertEqual(result, expectaion)
     }
 
+    func test_fetchData_response_Failure() async throws {
+        // given
+        let url = try XCTUnwrap(URL(string: api))
+        let data = try XCTUnwrap(TestMovieJsonData.json.data(using: .utf8))
+        let response = try XCTUnwrap(HTTPURLResponse(url: url, statusCode: 404, httpVersion: nil, headerFields: nil))
+        let dummy = DummyData(data: data, response: response)
+        let stubUrlSession = StubURLSession(dummy: dummy)
+        sut = NetworkManager(urlSession: stubUrlSession)
+        let expectaion = FetchError.invalidResponse
+        
+        // when
+        do {
+            let _ = try await sut.fetchData(url: api, dataType: Movie.self)
+        } catch {
+            //then
+            let result = try XCTUnwrap(error as? FetchError)
+            XCTAssertEqual(result, expectaion)
         }
     }
 }
