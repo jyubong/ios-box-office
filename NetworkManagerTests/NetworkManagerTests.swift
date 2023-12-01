@@ -2,7 +2,7 @@
 //  NetworkManagerTests.swift
 //  NetworkManagerTests
 //
-//  Created by Kiseok on 12/1/23.
+//  Created by Kiseok, jyubong
 //
 
 import XCTest
