@@ -7,17 +7,20 @@
 
 import Foundation
 
-final class NetworkManager {
-    static let shared = NetworkManager()
+struct NetworkManager {
+    private let urlSession: URLSessionProtocol
     
-    private init() { }
+    @available(iOS 15.0, *)
+    init(urlSession: URLSessionProtocol = URLSession.shared) {
+        self.urlSession = urlSession
+    }
     
     func fetchData<T: Decodable>(url: String, dataType: T.Type) async throws -> T {
         guard let url = URL(string: url) else {
             throw FetchError.invalidURL
         }
         
-        let (data, response) = try await URLSession.shared.data(from: url)
+        let (data, response) = try await urlSession.data(from: url, delegate: nil)
         
         guard let httpResponse = response as? HTTPURLResponse,
               (200...299).contains(httpResponse.statusCode) else {
