@@ -12,7 +12,7 @@ final class NetworkManagerTests: XCTestCase {
     var sut: NetworkManager!
     private let api = "https://kobis.or.kr/kobisopenapi/webservice/rest/boxoffice/searchDailyBoxOfficeList.json?key=f5eef3421c602c6cb7ea224104795888&targetDt=20220105"
 
-    func test_fetchDailyBoxOffice_success() {
+    func test_fetchData_success() {
         // given
         let promise = expectation(description: "")
         
@@ -51,7 +51,7 @@ final class NetworkManagerTests: XCTestCase {
         wait(for: [promise], timeout: 10)
     }
     
-    func test_fetchDailyBoxOffice_resoponse_Failure() {
+    func test_fetchData_resoponse_Failure() {
         // given
         let promise = expectation(description: "")
         
