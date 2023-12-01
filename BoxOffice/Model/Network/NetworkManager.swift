@@ -14,7 +14,7 @@ struct NetworkManager {
         self.urlSession = urlSession
     }
     
-    func fetchData<T: Decodable>(url: String, completion: @escaping (T?, Error?) -> Void) {
+    func fetchData<T: Decodable>(url: String, dataType: T.Type, completion: @escaping (T?, Error?) -> Void) {
         guard let url = URL(string: url) else {
             completion(nil, FetchError.invalidURL)
             return
@@ -32,7 +32,7 @@ struct NetworkManager {
                 return
             }
             
-            guard let data = data, let movie = try? JSONDecoder().decode(T.self, from: data) else {
+            guard let data = data, let movie = try? JSONDecoder().decode(dataType, from: data) else {
                 completion(nil, FetchError.invalidData)
                 return
             }
