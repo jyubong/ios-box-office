@@ -7,10 +7,12 @@
 
 import Foundation
 
-final class NetworkManager {
-    static let shared = NetworkManager()
+struct NetworkManager {
+    private let urlSession: URLSession
     
-    private init() { }
+    init(urlSession: URLSession = URLSession.shared) {
+        self.urlSession = urlSession
+    }
     
     func fetchData<T: Decodable>(url: String, completion: @escaping (T?, Error?) -> Void) {
         guard let url = URL(string: url) else {
@@ -18,7 +20,7 @@ final class NetworkManager {
             return
         }
         
-        URLSession.shared.dataTask(with: url) { data, response, error in
+        urlSession.dataTask(with: url) { data, response, error in
             if let error = error {
                 completion(nil, error)
                 return
