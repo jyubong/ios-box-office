@@ -6,30 +6,29 @@
 //
 
 import XCTest
+@testable import BoxOffice
 
 final class NetworkManagerTests: XCTestCase {
-
-    override func setUpWithError() throws {
-        // Put setup code here. This method is called before the invocation of each test method in the class.
+    var sut: NetworkManager!
+    private let api = "https://kobis.or.kr/kobisopenapi/webservice/rest/boxoffice/searchDailyBoxOfficeList.json?key=f5eef3421c602c6cb7ea224104795888&targetDt=20220105"
+    
+    func test_fetchData_success() async throws {
+        // given
+        let url = try XCTUnwrap(URL(string: api))
+        let data = try XCTUnwrap(TestMovieJsonData.json.data(using: .utf8))
+        let response = try XCTUnwrap(HTTPURLResponse(url: url, statusCode: 200, httpVersion: nil, headerFields: nil))
+        let dummy = DummyData(data: data, response: response)
+        let stubUrlSession = StubURLSession(dummy: dummy)
+        sut = NetworkManager(urlSession: stubUrlSession)
+        let expectaion = try JSONDecoder().decode(Movie.self, from: data)
+        
+        // when
+        let result = try await sut.fetchData(url: api, dataType: Movie.self)
+        
+        // then
+        XCTAssertEqual(result, expectaion)
     }
 
-    override func tearDownWithError() throws {
-        // Put teardown code here. This method is called after the invocation of each test method in the class.
-    }
-
-    func testExample() throws {
-        // This is an example of a functional test case.
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
-        // Any test you write for XCTest can be annotated as throws and async.
-        // Mark your test throws to produce an unexpected failure when your test encounters an uncaught error.
-        // Mark your test async to allow awaiting for asynchronous code to complete. Check the results with assertions afterwards.
-    }
-
-    func testPerformanceExample() throws {
-        // This is an example of a performance test case.
-        measure {
-            // Put the code you want to measure the time of here.
         }
     }
-
 }
