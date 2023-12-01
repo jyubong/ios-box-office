@@ -2,7 +2,7 @@
 //  FetchError.swift
 //  BoxOffice
 //
-//  Created by Kiseok on 11/30/23.
+//  Created by jyubong, Kiseok on 11/30/23.
 //
 
 enum FetchError: Error {

@@ -2,7 +2,7 @@
 //  URLManager.swift
 //  BoxOffice
 //
-//  Created by jyubong on 12/1/23.
+//  Created by jyubong, Kiseok on 12/1/23.
 //
 
 struct URLManager {
