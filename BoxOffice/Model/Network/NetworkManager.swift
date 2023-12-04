@@ -10,7 +10,6 @@ import Foundation
 struct NetworkManager {
     private let urlSession: URLSessionProtocol
     
-    @available(iOS 15.0, *)
     init(urlSession: URLSessionProtocol = URLSession.shared) {
         self.urlSession = urlSession
     }
@@ -20,7 +19,7 @@ struct NetworkManager {
             throw FetchError.invalidURL
         }
         
-        let (data, response) = try await urlSession.data(from: url, delegate: nil)
+        let (data, response) = try await urlSession.data(from: url)
         
         guard let httpResponse = response as? HTTPURLResponse,
               (200...299).contains(httpResponse.statusCode) else {

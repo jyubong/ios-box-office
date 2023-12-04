@@ -19,7 +19,7 @@ class StubURLSession: URLSessionProtocol {
         self.dummyData = dummy
     }
     
-    func data(from url: URL, delegate: (URLSessionTaskDelegate)? = nil) async throws -> (Data, URLResponse) {
+    func data(from url: URL) async throws -> (Data, URLResponse) {
         return (dummyData.data, dummyData.response)
     }
 }
