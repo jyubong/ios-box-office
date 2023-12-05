@@ -19,16 +19,33 @@ class ViewController: UIViewController {
             MovieListCell.self,
             forCellWithReuseIdentifier: "MovieListCell"
         )
+        
         collectionView.translatesAutoresizingMaskIntoConstraints = false
         
         return collectionView
     }()
+    
+    private var yesterday: String {
+        let yesterday = Date(timeIntervalSinceNow: -86400)
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyyMMdd"
+        
+        guard let dateString = dateFormatter.string(for: yesterday) else {
+            return ""
+        }
+        
+        return dateString
+    }
+    
+    var movieList: [DailyBoxOfficeList] = []
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        
         collectionView.dataSource = self
         
         autoLayout()
+        fetchData()
     }
     
     private func autoLayout() {
@@ -43,11 +60,40 @@ class ViewController: UIViewController {
             collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor)
         ])
     }
+    
+    private func fetchData() {
+        let networkManager = NetworkManager()
+        let date = yesterday
+        let url = URLManager.dailyBoxOffice(date: date).url
+        
+        networkManager.fetchData(url: url) { response in
+            switch response {
+            case .success(let data):
+                self.decode(data)
+                DispatchQueue.main.async {
+                    self.collectionView.reloadData()
+                }
+            case .failure(let error):
+                print(error.localizedDescription)
+            }
+        }
+    }
+    
+    private func decode(_ data: Data) {
+        do {
+            movieList = try Decoder().parse(
+                data: data,
+                type: Movie.self
+            ).boxOfficeResult.dailyBoxOfficeList
+        } catch {
+            print(error.localizedDescription)
+        }
+    }
 }
 
 extension ViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 10
+        return movieList.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
@@ -57,6 +103,8 @@ extension ViewController: UICollectionViewDataSource {
         ) as? MovieListCell else {
             return UICollectionViewListCell()
         }
+        
+        cell.movie = movieList[indexPath.item]
         
         return cell
     }
