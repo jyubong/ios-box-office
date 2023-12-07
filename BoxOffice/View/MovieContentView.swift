@@ -24,9 +24,7 @@ class MovieContentView: UIView, UIContentView {
         let stackView = UIStackView()
         stackView.translatesAutoresizingMaskIntoConstraints = false
         stackView.axis = .vertical
-        stackView.alignment = .fill
-//        stackView.distribution = .equalSpacing
-//        stackView.spacing = 5
+        stackView.alignment = .center
         
         stackView.addArrangedSubview(rankLabel)
         stackView.addArrangedSubview(rankFluctuationLabel)
@@ -50,8 +48,6 @@ class MovieContentView: UIView, UIContentView {
         stackView.translatesAutoresizingMaskIntoConstraints = false
         stackView.axis = .vertical
         stackView.alignment = .fill
-//        stackView.distribution = .equalSpacing
-//        stackView.spacing = 3
         
         stackView.addArrangedSubview(movieNameLabel)
         stackView.addArrangedSubview(audienceCountLabel)
@@ -63,8 +59,6 @@ class MovieContentView: UIView, UIContentView {
         stackView.translatesAutoresizingMaskIntoConstraints = false
         stackView.axis = .horizontal
         stackView.alignment = .fill
-//        stackView.distribution = .equalSpacing
-//        stackView.spacing = 10
         
         stackView.addArrangedSubview(rankStackView)
         stackView.addArrangedSubview(movieStackView)

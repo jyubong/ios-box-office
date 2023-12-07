@@ -17,6 +17,7 @@ class MovieListCell: UICollectionViewListCell {
         newConfiguration.movieName = movie?.movieName
         newConfiguration.audienceCount = movie?.audienceCount
         newConfiguration.audienceAccumulation = movie?.audienceAccumulation
+        self.accessories = [.disclosureIndicator()]
         
         contentConfiguration = newConfiguration
     }
