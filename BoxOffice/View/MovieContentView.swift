@@ -24,8 +24,12 @@ class MovieContentView: UIView, UIContentView {
         let stackView = UIStackView()
         stackView.translatesAutoresizingMaskIntoConstraints = false
         stackView.axis = .vertical
-        stackView.distribution = .equalSpacing
-        stackView.spacing = 5
+        stackView.alignment = .fill
+//        stackView.distribution = .equalSpacing
+//        stackView.spacing = 5
+        
+        stackView.addArrangedSubview(rankLabel)
+        stackView.addArrangedSubview(rankFluctuationLabel)
         return stackView
     }()
     
@@ -45,8 +49,9 @@ class MovieContentView: UIView, UIContentView {
         let stackView = UIStackView()
         stackView.translatesAutoresizingMaskIntoConstraints = false
         stackView.axis = .vertical
-        stackView.distribution = .equalSpacing
-        stackView.spacing = 3
+        stackView.alignment = .fill
+//        stackView.distribution = .equalSpacing
+//        stackView.spacing = 3
         
         stackView.addArrangedSubview(movieNameLabel)
         stackView.addArrangedSubview(audienceCountLabel)
@@ -57,8 +62,9 @@ class MovieContentView: UIView, UIContentView {
         let stackView = UIStackView()
         stackView.translatesAutoresizingMaskIntoConstraints = false
         stackView.axis = .horizontal
-        stackView.distribution = .equalSpacing
-        stackView.spacing = 10
+        stackView.alignment = .fill
+//        stackView.distribution = .equalSpacing
+//        stackView.spacing = 10
         
         stackView.addArrangedSubview(rankStackView)
         stackView.addArrangedSubview(movieStackView)
@@ -83,7 +89,7 @@ class MovieContentView: UIView, UIContentView {
     init(configuration: MovieConfiguration) {
         super.init(frame: .zero)
         
-        addSubview(rankStackView)
+        addSubview(stackView)
 //        addSubview(movieNameLabel)
         autoLayout()
         
@@ -102,23 +108,23 @@ class MovieContentView: UIView, UIContentView {
     }
     
     private func autoLayout() {
-//        NSLayoutConstraint.activate([
-//            stackView.leadingAnchor.constraint(equalTo: layoutMarginsGuide.leadingAnchor , constant: 10),
-//            stackView.topAnchor.constraint(equalTo: layoutMarginsGuide.topAnchor, constant: 10),
-//            stackView.bottomAnchor.constraint(equalTo: layoutMarginsGuide.bottomAnchor, constant: -10),
-//            stackView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -10),
-//            rankStackView.widthAnchor.constraint(equalTo: stackView.widthAnchor, multiplier: 0.2)
-//        ])
-        
-        rankStackView.addArrangedSubview(rankLabel)
-        rankStackView.addArrangedSubview(rankFluctuationLabel)
-        
         NSLayoutConstraint.activate([
-            rankStackView.leadingAnchor.constraint(equalTo: layoutMarginsGuide.leadingAnchor , constant: 10),
-            rankStackView.topAnchor.constraint(equalTo: layoutMarginsGuide.topAnchor, constant: 10),
-            rankStackView.bottomAnchor.constraint(equalTo: layoutMarginsGuide.bottomAnchor, constant: -10),
-            rankStackView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -10)
+            stackView.leadingAnchor.constraint(equalTo: layoutMarginsGuide.leadingAnchor , constant: 10),
+            stackView.topAnchor.constraint(equalTo: layoutMarginsGuide.topAnchor, constant: 10),
+            stackView.bottomAnchor.constraint(equalTo: layoutMarginsGuide.bottomAnchor, constant: -10),
+            stackView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -10),
+            rankStackView.widthAnchor.constraint(equalTo: stackView.widthAnchor, multiplier: 0.2)
         ])
+        
+//        rankStackView.addArrangedSubview(rankLabel)
+//        rankStackView.addArrangedSubview(rankFluctuationLabel)
+//        
+//        NSLayoutConstraint.activate([
+//            rankStackView.leadingAnchor.constraint(equalTo: layoutMarginsGuide.leadingAnchor , constant: 10),
+//            rankStackView.topAnchor.constraint(equalTo: layoutMarginsGuide.topAnchor, constant: 10),
+//            rankStackView.bottomAnchor.constraint(equalTo: layoutMarginsGuide.bottomAnchor, constant: -10),
+//            rankStackView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -10)
+//        ])
     }
     
     private func apply(configuration: MovieConfiguration) {
