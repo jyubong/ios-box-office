@@ -8,16 +8,12 @@
 import UIKit
 
 class ViewController: UIViewController {
-    private var collectionView: UICollectionView = {
+    private lazy var collectionView: UICollectionView = {
         let configuration = UICollectionLayoutListConfiguration(appearance: .plain)
         let layout = UICollectionViewCompositionalLayout.list(using: configuration)
         let collectionView = UICollectionView(
-            frame: .zero,
+            frame: view.bounds,
             collectionViewLayout: layout
-        )
-        collectionView.register(
-            MovieListCell.self,
-            forCellWithReuseIdentifier: "MovieListCell"
         )
         collectionView.translatesAutoresizingMaskIntoConstraints = false
         
@@ -36,13 +32,18 @@ class ViewController: UIViewController {
          return dateString
      }
     
+    var dataSource: UICollectionViewDiffableDataSource<Section, DailyBoxOfficeList>!
     var movieList: [DailyBoxOfficeList] = []
+    
+    enum Section: Hashable {
+        case main
+    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        collectionView.dataSource = self
         
         autoLayout()
+        fetchData()
     }
     
     private func autoLayout() {
@@ -58,6 +59,26 @@ class ViewController: UIViewController {
         ])
     }
     
+    private func collectionViewDataSource() {
+        let cellRegistration = UICollectionView.CellRegistration<MovieListCell, DailyBoxOfficeList> { cell, indexPath, item in
+            cell.movie = item
+        }
+        
+        dataSource = UICollectionViewDiffableDataSource<Section, DailyBoxOfficeList>(collectionView: collectionView) {
+            (collectionView: UICollectionView, indexPath: IndexPath, identifier: DailyBoxOfficeList) -> UICollectionViewCell? in
+            let cell = collectionView.dequeueConfiguredReusableCell(using: cellRegistration,
+                                                                    for: indexPath,
+                                                                    item: identifier)
+            return cell
+        }
+        
+        var snapshot = NSDiffableDataSourceSnapshot<Section, DailyBoxOfficeList>()
+        snapshot.appendSections([.main])
+        snapshot.appendItems(movieList, toSection: .main)
+
+        dataSource.apply(snapshot, animatingDifferences: false)
+    }
+    
     private func fetchData() {
         let networkManager = NetworkManager()
         let date = yesterday
@@ -68,6 +89,7 @@ class ViewController: UIViewController {
             case .success(let data):
                 self.decode(data)
                 DispatchQueue.main.async {
+                    self.collectionViewDataSource()
                     self.collectionView.reloadData()
                 }
             case .failure(let error):
@@ -85,23 +107,6 @@ class ViewController: UIViewController {
         } catch {
             print(error.localizedDescription)
         }
-    }
-}
-
-extension ViewController: UICollectionViewDataSource {
-    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 10
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        guard let cell = collectionView.dequeueReusableCell(
-            withReuseIdentifier: "MovieListCell",
-            for: indexPath
-        ) as? MovieListCell else {
-            return UICollectionViewListCell()
-        }
-        
-        return cell
     }
 }
 
