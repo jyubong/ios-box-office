@@ -42,7 +42,9 @@ class ViewController: UIViewController {
         super.viewDidLoad()
         collectionView.dataSource = self
         
+        fetchData()
         autoLayout()
+        configureRefreshButton()
     }
     
     private func autoLayout() {
@@ -70,6 +72,10 @@ class ViewController: UIViewController {
                 DispatchQueue.main.async {
                     self.collectionView.reloadData()
                 }
+                
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.7) {
+                    self.collectionView.refreshControl?.endRefreshing()
+                }
             case .failure(let error):
                 print(error.localizedDescription)
             }
@@ -90,7 +96,7 @@ class ViewController: UIViewController {
 
 extension ViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 10
+        return movieList.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
@@ -100,8 +106,19 @@ extension ViewController: UICollectionViewDataSource {
         ) as? MovieListCell else {
             return UICollectionViewListCell()
         }
+        cell.configureLabelText(movieList[indexPath.item])
         
         return cell
     }
 }
 
+extension ViewController {
+    private func configureRefreshButton() {
+        collectionView.refreshControl = UIRefreshControl()
+        collectionView.refreshControl?.addTarget(self, action: #selector(handleRefreshControl), for: .valueChanged)
+    }
+    
+    @objc func handleRefreshControl() {
+        fetchData()
+    }
+}
